@@ -1,0 +1,290 @@
+
+
+/* تزریق آیکون آدمک (خطی) به دکمه اتمی ورود با رنگ ملایم‌تر #64748B */
+.my-login-btn::before,
+.my-login-btn .e-n-button-text::before {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-left:3px; /* من فاصله را روی ۸ پیکسل نگه داشتم تا آیکون به متن نچسبد */
+    vertical-align: middle;
+    /* رنگ stroke در اینجا به %2364748b تغییر یافت */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M20 21a8 8 0 0 0-16 0'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+
+
+
+
+
+/* ==========================================================================
+   Atomic Header: Smart Flexbox Split (RTL)
+   ========================================================================== */
+
+/* این کد به دکمه ورود می‌گوید: تمام فضای خالی وسط هدر را بگیر و خودت 
+  و سبد خرید را به منتهی‌الیه سمت چپ هل بده! 
+*/
+.atomic-push-left {
+    margin-right: auto !important; 
+}
+
+/* کنترل عرض فرم جستجو تا در مانیتورهای بزرگ بیش از حد کش نیاید */
+.atomic-search-box {
+    width: 400px;
+    max-width: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+/* ==========================================================================
+   ATOMIC MEGA MENU: FINAL MASTER ARCHITECTURE (A11y + Pixel Perfect Border)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. CORE LOGIC & PANEL STATE (Colors managed in Elementor)
+   -------------------------------------------------------------------------- */
+
+/* Panel Base State (منطق مخفی بودن پنل اصلی) */
+.mega-dropdown-panel {
+    top: 100%;
+    right: 0;
+    width: 1100px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(15px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    z-index: 999;
+ 
+    /* 🔴 تعیین پنل اصلی به عنوان مرجع قطعی برای تراز عمودی */
+    position: relative;
+ 
+    /* 🎨 تنظیم رنگ کل سایدبار به خاکستری */
+    background-color: #f5f5f5;
+ 
+    /* 🔴 فیکس حاشیه: اضافه کردن حاشیه و سایه مستقیم از طریق CSS */
+    border: 1px solid #e0e0e0; /* حاشیه یکپارچه و ظریف */
+    border-radius: 8px; /* گردی ملایم گوشه‌ها برای ظاهر مدرن */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08); /* سایه نرم ۳ بعدی */
+    overflow: hidden; /* جلوگیری مطلق از بیرون زدن پس‌زمینه سفید روی حاشیه‌ها */
+}
+
+/* Show Panel on Wrapper Hover (نمایش پنل هنگام هاور روی کانتینر مادر) */
+.mega-wrapper:hover .mega-dropdown-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Tab Items Base (فقط تنظیمات ساختاری تب‌ها) */
+.mega-tab-item {
+    width: 210px;
+    cursor: pointer;
+ 
+    /* 🔴 لغو خاصیت مرجع بودن تب‌ها تا محتوا به سقف پنل مادر بچسبد */
+    position: static !important;
+ 
+    /* 🎨 استایل پایه تب‌ها (خاکستری و بدون خط زیرین در حالت عادی) */
+    background-color: #f5f5f5;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Tab Content Box (باکس محتوای تب‌ها) */
+.mega-tab-content {
+    position: absolute;
+    top: 0;
+    right: 210px;
+ 
+    /* 🔴 راز اتمی: عرض calc پاک شد و لبه به دیواره چپ میخکوب شد تا باگ حاشیه رفع شود */
+    left: 0;
+ 
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 10;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+ 
+    /* 🎨 رنگ پس‌زمینه محتوا همیشه سفید است */
+    background-color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   2. SMART STATE MACHINE (Pure CSS via :has)
+   -------------------------------------------------------------------------- */
+
+/* وضعیت پیش‌فرض -> نمایش محتوای تب اول و 🎨 سفید کردن تب اول */
+.mega-tab-item.default-active {
+    background-color: #ffffff; /* 🎨 تب پیش‌فرض سفید است */
+    color: #ef394e; /* 🎨 متن قرمز دیجی‌کالایی */
+}
+.mega-tab-item.default-active .mega-tab-content {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* خاموش کردن هوشمندانه محتوای تب اول -> وقتی روی تب دیگری هاور شد */
+.mega-dropdown-panel:has(.mega-tab-item:hover) .mega-tab-item.default-active:not(:hover) .mega-tab-content {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* 🎨 خاکستری کردن تب اول -> وقتی روی تب دیگری هاور شد */
+.mega-dropdown-panel:has(.mega-tab-item:hover) .mega-tab-item.default-active:not(:hover) {
+    background-color: #f5f5f5;
+    color: inherit;
+}
+
+/* روشن کردن محتوای تبی که مستقیماً روی آن هاور شده است و 🎨 سفید کردن همان تب */
+.mega-tab-item:hover {
+    background-color: #ffffff !important; /* 🎨 تب هاور شده سفید می‌شود */
+    color: #ef394e !important; /* 🎨 متن تب هاور شده قرمز می‌شود */
+}
+.mega-tab-item:hover .mega-tab-content {
+    opacity: 1;
+    visibility: visible;
+    z-index: 20;
+}
+
+/* --------------------------------------------------------------------------
+   3. SUB-CATEGORY LIST STYLING (A11y Optimized & Flat DOM)
+   -------------------------------------------------------------------------- */
+
+/* کانتینر اتمی ستون زیردسته */
+.mega-sub-group {
+    width: max-content;
+}
+
+
+
+ /* استایل عنوان اصلی (استاندارد جهانی UI/UX - زغالی تیره) */
+.mega-sub-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1F2937; 
+    padding-right: 5px; 
+    border-right: 2px solid #ef394e; 
+    line-height: 1.2; 
+    display: block !important; /* اطمینان از رفتار صحیح المان برای ایجاد فاصله */
+    
+    /* 🔴 افزایش فاصله پایینی ازالمان پاراگراف که خط قرمز بغل خودش داره */
+    margin: 0 0 6px 0 !important; 
+}
+
+/* استایل لینک‌های زیرمجموعه (خاکستری میانه و فاصله‌دار) */
+.mega-sub-link {
+    font-size: 13px;
+    font-weight: 400;
+    color: #4B5563; 
+    padding-right: 15px; 
+    text-decoration: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+    
+}
+
+
+/* افکت تغییر رنگ و حرکت نرم هنگام هاور */
+.mega-sub-link:hover {
+    color: #ef394e;
+    transform: translateX(-5px); 
+}
+
+
+
+
+
+/* مخفی کردن المان در موبایل و تبلت (عرض کمتر از 1024 پیکسل) */
+@media (max-width: 1024px) {
+    .hide-on-mobile { 
+        display: none !important; 
+    }
+}
+
+/* مخفی کردن المان در دسکتاپ (عرض بیشتر از 1024 پیکسل) */
+@media (min-width: 1025px) {
+    .hide-on-desktop { 
+        display: none !important; 
+    }
+}
+
+
+
+
+
+/* ==========================================================================
+   MOBILE BOTTOM NAVIGATION (App-like UX)
+   ========================================================================== */
+
+/* ۱. مخفی کردن نوار اپلیکیشنی در دسکتاپ و تبلت */
+.mobile-bottom-nav {
+    display: none !important;
+}
+
+/* ۲. نمایش و فیکس کردن نوار در پایین صفحه فقط برای موبایل (عرض کمتر از 768px) */
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        display: flex !important; /* روشن کردن نوار با حفظ خاصیت فلکس‌باکس */
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #ffffff;
+        
+        /* رعایت حاشیه امن آیفون برای جلوگیری از تداخل با نوار سیستم */
+        padding: 10px 10px calc(15px + env(safe-area-inset-bottom)) 10px;
+        
+        box-shadow: 0 -5px 25px rgba(0,0,0,0.08); /* سایه لوکس رو به بالا */
+        z-index: 9999;
+        border-radius: 20px 20px 0 0; /* گرد کردن لبه‌های بالا */
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================================================
+   APP NAVIGATION HOVER & ACTIVE STATES
+   ========================================================================== */
+
+/* ۱. افکت هنگام لمس (Hover & Active) - برای تمامی دکمه‌ها */
+.mobile-bottom-nav .nav-home:active svg, .mobile-bottom-nav .nav-home:active span,
+.mobile-bottom-nav .nav-category:active svg, .mobile-bottom-nav .nav-category:active span,
+.mobile-bottom-nav .nav-cart:active svg, .mobile-bottom-nav .nav-cart:active span,
+.mobile-bottom-nav .nav-profile:active svg, .mobile-bottom-nav .nav-profile:active span {
+    color: #ef394e !important;
+    fill: #ef394e !important;
+    transition: all 0.2s ease-in-out;
+}
+
+/* ۲. روشن ماندن دکمه در صفحه اختصاصی خودش (با کمک کلاس‌های بومی وردپرس) */
+.home .nav-home svg, .home .nav-home span,
+.archive .nav-category svg, .archive .nav-category span,
+.woocommerce-cart .nav-cart svg, .woocommerce-cart .nav-cart span,
+.woocommerce-account .nav-profile svg, .woocommerce-account .nav-profile span {
+    color: #ef394e !important;
+    fill: #ef394e !important;
+}
+
+/* ۳. انیمیشن نرم برای تغییر رنگ */
+.mobile-bottom-nav svg, .mobile-bottom-nav span {
+    transition: color 0.3s ease, fill 0.3s ease;
+}
